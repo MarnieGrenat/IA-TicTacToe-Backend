@@ -1,25 +1,18 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Ignorar arquivos temporários e __pycache__ em qualquer lugar dentro de src/
+src/**/__pycache__/
+src/**/*.pyc
+src/**/*.pyo
 
-# Test binary, built with `go test -c`
-*.test
+# Ignorar arquivos de backup/swap
+src/**/*.swp
+src/**/*.swo
 
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
+# Ignorar arquivos pessoais, logs ou dumps
+src/**/*.log
+src/**/*.tmp
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Exemplo: ignorar arquivos com sufixo *_test.py (caso queira ignorar testes)
+# src/**/*_test.py
 
-# Go workspace file
-go.work
-go.work.sum
-
-# env file
-.env
+# Ignorar todos os arquivos .DS_Store (Mac)
+**/.DS_Store

@@ -1,7 +1,8 @@
 
 # 🧠 Board API – Documentação dos Endpoints
 
-Esta API controla um objeto `Board` (tabuleiro 3x3), permitindo interações simples como atualização de células, visualização do estado atual e reset total.
+API responsável por controlar o estado de um tabuleiro (3x3) para aplicações como jogos da velha ou simulações de IA.
+
 ---
 
 ## 📍 Base URL
@@ -14,57 +15,77 @@ http://localhost:5000/
 
 ## 🔹 Endpoints
 
-### `GET /get`
+### `GET /board/v1/fetch`
 
 **Descrição:**
-Retorna o estado atual do tabuleiro, com os símbolos visuais.
+Retorna o estado atual do tabuleiro.
 
-**Resposta:**
+**Parâmetros JSON opcionais:**
+
+| Campo | Tipo  | Descrição                           |
+|-------|-------|--------------------------------------|
+| `raw` | bool  | Se `true`, retorna o estado numérico (interno). Se `false` ou ausente, retorna símbolos (`O` / `Y`). |
+
+**Exemplo de corpo da requisição:**
 
 ```json
-[
-  ["", "O", ""],
-  ["", "", "Y"],
-  ["", "", ""]
-]
+{
+  "raw": false
+}
+```
+
+**Resposta (raw = false):**
+
+```json
+{
+  "message": "Presenting board",
+  "board": [
+    ["", "O", ""],
+    ["", "", "Y"],
+    ["", "", ""]
+  ]
+}
 ```
 
 ---
 
-### `POST /update`
+### `POST /board/v1/update`
 
 **Descrição:**
-Atualiza uma célula do tabuleiro com o símbolo `-1` (O) ou `1` (Y), na posição especificada.
+Atualiza uma posição do tabuleiro com o símbolo desejado.
 
-**Body (JSON):**
+**Corpo JSON esperado:**
 
 ```json
 {
-  "s": 1,    // símbolo: -1 para "O", 1 para "Y"
-  "x": 0,    // coordenada X (0 a 2)
-  "y": 1     // coordenada Y (0 a 2)
+  "s": -1,   // símbolo: -1 para "O", 1 para "Y"
+  "x": 1,    // coordenada X (0 a 2)
+  "y": 0     // coordenada Y (0 a 2)
 }
 ```
-
-**Respostas possíveis:**
-
-- `200 OK` – Atualização feita com sucesso.
-- `400 Bad Request` – Dados ausentes ou inválidos.
 
 **Resposta de sucesso:**
 
 ```json
 {
-  "message": "Board updated"
+  "message": "Board updated successfully"
+}
+```
+
+**Resposta de erro:**
+
+```json
+{
+  "message": "Failed to update board"
 }
 ```
 
 ---
 
-### `POST /reset`
+### `POST /board/v1/reset`
 
 **Descrição:**
-Reseta o tabuleiro para o estado inicial (vazio).
+Reseta o tabuleiro para o estado inicial.
 
 **Resposta:**
 
@@ -76,10 +97,10 @@ Reseta o tabuleiro para o estado inicial (vazio).
 
 ---
 
-### `GET /get_status`
+### `GET /board/v1/status`
 
 **Descrição:**
-Retorna o status geral da classe `Board`. Pode ser usado para verificar a integridade da instância.
+Retorna um status simples confirmando que a classe `Board` foi coletada com sucesso.
 
 **Resposta:**
 
@@ -91,28 +112,28 @@ Retorna o status geral da classe `Board`. Pode ser usado para verificar a integr
 
 ---
 
-## 🛠️ Observações Técnicas
-
-- O símbolo `s` deve ser `1` (Y) ou `-1` (O). Outros valores serão ignorados.
-- As coordenadas `x` e `y` devem estar no intervalo de `0` a `2`.
-- O sistema **não bloqueia sobreposição de jogadas**. (podemos implementar no proximo commit)
-
----
-
-## 🧪 Exemplos de uso via `curl`
+## 🧪 Exemplos com `curl`
 
 ```bash
-# Ver tabuleiro atual
-curl http://localhost:5000/get
+# Obter tabuleiro
+curl -X GET http://localhost:5000/board/v1/fetch -H "Content-Type: application/json" -d '{"raw": false}'
 
-# Atualizar o tabuleiro
-curl -X POST http://localhost:5000/update \
+# Atualizar uma célula
+curl -X POST http://localhost:5000/board/v1/update \
      -H "Content-Type: application/json" \
      -d '{"s": 1, "x": 0, "y": 1}'
 
 # Resetar o tabuleiro
-curl -X POST http://localhost:5000/reset
+curl -X POST http://localhost:5000/board/v1/reset
 
 # Verificar status da instância
-curl http://localhost:5000/get_status
+curl -X GET http://localhost:5000/board/v1/status
 ```
+
+---
+
+## 🛠️ Observações Técnicas
+
+- `s`: deve ser `-1` (representa "O") ou `1` (representa "Y").
+- `x` e `y`: valores inteiros entre `0` e `2`.
+- Se a posição já estiver ocupada ou os dados forem inválidos, a atualização será rejeitada.
