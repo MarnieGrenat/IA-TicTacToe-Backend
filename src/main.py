@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
-from board.table import Board
-import board.resource as bs
+from board import Board
+from board import resources as bs
 
 def main(debug=False):
     app = Flask(__name__)
@@ -11,10 +11,10 @@ def main(debug=False):
 
     BoardGet, BoardUpdate, BoardReset, BoardStatus = bs.create_resources(board)
 
-    api.add_resource(BoardGet, '/get')
-    api.add_resource(BoardUpdate, '/update')
-    api.add_resource(BoardReset, '/reset')
-    api.add_resource(BoardStatus, '/get_status')
+    api.add_resource(BoardGet, '/board/v1/fetch')
+    api.add_resource(BoardUpdate, '/board/v1/update')
+    api.add_resource(BoardReset, '/board/v1/reset')
+    api.add_resource(BoardStatus, '/board/v1/status')
 
     app.run(debug=debug)
 

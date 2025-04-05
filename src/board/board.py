@@ -12,13 +12,15 @@ class Board:
     def reset(self):
         self.board = self.clear()
 
-    def update_board(self, symbol: int, x: int, y: int):
+    def update_board(self, symbol: int, x: int, y: int) -> bool:
         '''update board status. | symbol= int (-1 or 1) | x= coordinate x between 0 and 2 | y= coordinate y between 0 and 2'''
-        if valid_coordinates(x, y) and valid_symbol(symbol):
+        if (self.board[x][y] != '0') and valid_coordinates(x, y) and valid_symbol(symbol):
             self.board[x][y] = symbol
+            return True
+        return False
 
     def export_board(self) -> list[list[str]]:
-        ''' export board containing visual symbols (prettify)'''
+        '''Export board containing visual symbols (prettify)'''
         result = [['', '', ''],
                   ['', '', ''],
                   ['', '', '']]
