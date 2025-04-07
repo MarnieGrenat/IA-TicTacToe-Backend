@@ -27,13 +27,14 @@ def create_resources(board : Board):
             if None in [s, x, y]:
                 return {'message' : f'No useful data provided: {s=}, {x=}, {y=}.'}, 400
             if board.update_board(s, x, y):
-                return {'message' : 'Board updated successfully'}
+                return {'message' : 'Board updated successfully',
+                        'board': board.export_board()}
             return {'message' : 'Failed to update board'}, 500
 
     class Get(Resource):
         def get(self):
             parser = reqparse.RequestParser()
-            parser.add_argument('raw', type=bool, location='json', required=False)
+            parser.add_argument('raw', type=bool, location='args', required=False)
 
             if parser.parse_args().get('raw'):
                 return {'message' : 'Presenting raw board', 'board' : board.export_board_raw() }
