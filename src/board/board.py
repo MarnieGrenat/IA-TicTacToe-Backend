@@ -29,7 +29,7 @@ class Board:
             for y in range(len(result)):
                 match self.board[x][y]:
                     case -1 : result[x][y] = 'O'
-                    case  1 : result[x][y] = 'Y'
+                    case  1 : result[x][y] = 'X'
         return result
 
     def export_board_raw(self):
