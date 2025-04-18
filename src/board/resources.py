@@ -4,7 +4,7 @@ from board import Board
 parser = reqparse.RequestParser()
 parser.add_argument('data', type=list, location='json', required=False)
 
-def create_resources(board : Board):
+def create_resources(board : Board, callback):
     class Reset(Resource):
         def post(self):
             board.reset()
@@ -12,8 +12,17 @@ def create_resources(board : Board):
 
     class Status(Resource):
         def get(self):
-            # Aqui atualizamos a chamada da API da IA
-            return {'message' : 'Board class has been collected successfully'}
+            parser = reqparse.RequestParser()
+            parser.add_argument('model', type=str, location='json', required=True)
+            parser.add_argument('features', type=list, location='json', required=True)
+            args = parser.parse_args()
+            model_name, features = args.get('model'), args.get('features')
+
+            try:
+                pred_label, pred_proba = callback(model_name, features)
+                return {'prediction' : pred_label, 'probabilities' : pred_proba}
+            except ValueError as e:
+                return {'error': str(e)}, 400
 
     class Update(Resource):
         def post(self):
