@@ -13,11 +13,12 @@ def create_resources(board : Board, callback):
     class Status(Resource):
         def get(self):
             parser = reqparse.RequestParser()
-            parser.add_argument('model', type=str, location='json', required=True)
-            parser.add_argument('features', type=list, location='json', required=True)
+            parser.add_argument('model',    type=str,  location='args', required=False, default='dt')
+            parser.add_argument('features', type=str, location='args', required=True)
             args = parser.parse_args()
-            model_name, features = args.get('model'), args.get('features')
 
+            model_name, features = args.get('model'), args.get('features').split(',')
+            map(int, features)
             try:
                 pred, prob = callback(model_name, features)
                 return {'prediction' : pred, 'probabilities' : prob}
