@@ -18,7 +18,7 @@ def create_resources(board : Board, callback):
             args = parser.parse_args()
 
             model_name, features = args.get('model'), args.get('features').split(',')
-            map(int, features)
+            features = list(map(int, features))
             try:
                 pred, prob = callback(model_name, features)
                 return {'prediction' : pred, 'probabilities' : prob}

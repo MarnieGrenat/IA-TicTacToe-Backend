@@ -42,7 +42,7 @@ def predict(model_name : str, features : list[int]):
     model = _get_model(model_name)
 
     if not isinstance(features, (list, tuple)) or len(features) != 9:
-        raise ValueError("Features deve ser list ou tuple com 9 elementos.")
+        raise ValueError(f"Features deve ser list ou tuple com 9 elementos. Quantidade_Elementos={len(features)}")
 
     prediction = int(model.predict([features])[0])
     probability = model.predict_proba([features])[0].tolist()
