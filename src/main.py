@@ -3,7 +3,7 @@ from flask_restful import Api
 from flask_cors import CORS
 from board import Board
 from board import resources as bs
-from models import predict
+import models
 
 def main(debug=False):
     app = Flask(__name__)
@@ -13,7 +13,7 @@ def main(debug=False):
 
     board = Board()
 
-    BoardGet, BoardUpdate, BoardReset, BoardStatus = bs.create_resources(board, predict)
+    BoardGet, BoardUpdate, BoardReset, BoardStatus = bs.create_resources(board, models.predict)
 
     api.add_resource(BoardGet, '/board/v1/fetch')
     api.add_resource(BoardUpdate, '/board/v1/update')
