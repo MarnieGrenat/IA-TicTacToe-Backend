@@ -19,10 +19,10 @@ def create_resources(board : Board, callback):
             model_name, features = args.get('model'), args.get('features')
 
             try:
-                pred_label, pred_proba = callback(model_name, features)
-                return {'prediction' : pred_label, 'probabilities' : pred_proba}
+                pred, prob = callback(model_name, features)
+                return {'prediction' : pred, 'probabilities' : prob}
             except ValueError as e:
-                return {'error': str(e)}, 400
+                return {'error': str(e)}, 500
 
     class Update(Resource):
         def post(self):

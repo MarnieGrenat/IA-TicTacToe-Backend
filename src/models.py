@@ -10,16 +10,19 @@ SUPPORTED_MODELS = {
 # Cache interno de modelos carregados
 _loaded_models = {}
 
+def start_models():
+    for model_name, model_path in SUPPORTED_MODELS:
+        _loaded_models[model_name] = joblib.load(model_path)
+
 @lru_cache(maxsize=None)
 def _get_model(name: str):
     """
     Retorna o modelo já carregado ou faz o load na primeira vez.
     """
-    if name not in SUPPORTED_MODELS:
+    try:
+        return _loaded_models[name]
+    except:
         raise ValueError(f"Modelo '{name}' não encontrado. Modelos disponíveis: {list(SUPPORTED_MODELS.keys())}")
-    if name not in _loaded_models:
-        _loaded_models[name] = joblib.load(SUPPORTED_MODELS[name])
-    return _loaded_models[name]
 
 def predict(model_name, features):
     """
