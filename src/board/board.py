@@ -34,3 +34,31 @@ class Board:
 
     def export_board_raw(self):
         return self.board
+
+    def flatten_board(self):
+        ''' Transforma as observações 3x3 em 1x9'''
+        flat = [cell for row in self.board for cell in row]
+        return flat
+
+    def check_wins(self):
+        '''Verifica o estado do tabuleiro e o retorna'''
+        # Diagonais
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] != 0:
+            return self._get_label(self.board[1][1])
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] != 0:
+            return self._get_label(self.board[1][1])
+
+        # Linhas e colunas
+        for i in range(3):
+            if self.board[0][i] == self.board[1][i] == self.board[2][i] != 0:
+                return self._get_label(self.board[0][i])
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] != 0:
+                return self._get_label(self.board[i][0])
+        if '0' not in self.flatten_board():
+            return 2
+        return 3
+
+    def _get_label(self, symbol : int) -> int:
+        match symbol:
+            case -1: return 0
+            case 1: return 3

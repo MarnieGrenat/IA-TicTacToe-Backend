@@ -8,10 +8,10 @@ SUPPORTED_MODELS = {
     }
 
 LABEL = {
-    0 : "O Victory",
-    1 : "Draw",
-    2 : "Ongoing",
-    3 : "X Victory"
+    0 : "O_WIN",
+    1 : "DRAW",
+    2 : "ONGOING",
+    3 : "X_WIN"
 }
 
 # Cache interno de modelos carregados
@@ -46,4 +46,5 @@ def predict(model_name : str, features : list[int]):
 
     prediction = int(model.predict([features])[0])
     probability = model.predict_proba([features])[0].tolist()
-    return LABEL[prediction], [float(p) for p in probability]
+    print(f'Model={model_name} : prediction={LABEL[prediction]} : raw {prediction=} : {probability=} : {features=}')
+    return prediction, probability
