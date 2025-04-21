@@ -2,9 +2,10 @@ import joblib
 from functools import lru_cache # Evitar problemas de concorrência...
 
 SUPPORTED_MODELS = {
-    'mlp' : 'models/mlp.pkl',
+    'mlp' : 'models/multilayer_perceptron.pkl',
     'dt'  : 'models/decision_tree.pkl',
-    'knn' : 'models/knn_tictactoe.pkl'
+    'knn' : 'models/knn.pkl',
+    'xgb' : 'models/xgboost.pkl'
     }
 
 LABEL = {
@@ -30,7 +31,7 @@ def predict(model_name : str, features : list[int]):
     Parâmetros:
     -----------
     model_name : str
-        Um dos: 'mlp', 'dt', 'knn'.
+        Um dos: 'mlp', 'dt', 'knn', 'xgb'.
     features : list of int/float
         Lista de 9 valores correspondentes às casas do tabuleiro.
 
