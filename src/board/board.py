@@ -54,9 +54,13 @@ class Board:
                 return self._get_label(self.board[0][i])
             if self.board[i][0] == self.board[i][1] == self.board[i][2] != 0:
                 return self._get_label(self.board[i][0])
-        if '0' not in self.flatten_board():
-            return 2
-        return 3
+
+        # Verificar se o jogo ainda está em andamento (se há posições vazias)
+        if 0 in self.flatten_board():
+            return 2  # Jogo em andamento
+
+        # Verificar se o jogo terminou em empate (sem espaços vazios e sem vencedor)
+        return 1  # Empate
 
     def _get_label(self, symbol : int) -> int:
         match symbol:
