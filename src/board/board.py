@@ -25,7 +25,7 @@ class Board:
         True se célula estava vazia e símbolo válido,
         caso contrário False.
         """
-        if _valid_coordinates(pos) and _valid_symbol(symbol) and self.board[pos] == 0:
+        if self._valid_coordinates(pos) and self._valid_symbol(symbol) and self.board[pos] == 0:
             self.board[pos] = symbol
             return True
         return False
@@ -51,6 +51,16 @@ class Board:
             return result_3x3
         else:
             raise ValueError(f'Invalid Input={format}')
+
+    @staticmethod
+    def to_int(b: list[str]) -> list[int]:
+        result = [0,0,0,0,0,0,0,0,0]
+        for i in range(len(b)):
+            match b[i]:
+                case '' : result[i] = 0
+                case 'X': result[i] = 1
+                case 'O': result[i] = -1
+        return result
 
     def check_win(self) -> int:
         """
@@ -81,19 +91,14 @@ class Board:
             return 2 # Em progesso
         return 0 # Empate
 
-def _valid_coordinates(pos: int) -> bool:
-    """
-    Verifica se as coordenadas (x,y) estão dentro do tabuleiro 3x3 (0..2).
-    """
-    return 0 <= pos  <= 8
+    def _valid_coordinates(self, pos: int) -> bool:
+        """
+        Verifica se as coordenadas (x,y) estão dentro do tabuleiro 3x3 (0..2).
+        """
+        return 0 <= pos  <= 8
 
-def _valid_symbol(symbol: int) -> bool:
-    """
-    Verifica se o símbolo é válido (-1 ou +1).
-    """
-    return symbol in [-1, 1]
-
-def _get_label(self, symbol: int) -> int:
-    match(symbol):
-        case -1: return 3
-        case _ : return symbol
+    def _valid_symbol(self, symbol: int) -> bool:
+        """
+        Verifica se o símbolo é válido (-1 ou +1).
+        """
+        return symbol in [-1, 1]
