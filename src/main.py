@@ -17,31 +17,10 @@ def main(debug=False):
     model_path = os.path.join(current_dir, 'deps/output/model.json')
     mlp_model = load_model(model_path)
 
-    # callback simplesmente chama mlp_model.predict(...)
-    def predict(_, features):
-        # A MLP escolhe a próxima jogada
-        move = mlp_model.predict(features)
+    BoardUpdate, BoardReset = bs.create_resources(board, mlp_model.predict)
 
-        # Converte índice linear (0-8) para coordenadas (x, y)
-        x, y = divmod(move, 3)
-
-        # Tenta jogar no tabuleiro com símbolo -1 (O)
-        success = board.update_board(-1, x, y)
-
-        # Verifica o resultado do jogo
-        if success:
-            estado = board.check_wins()
-        else:
-            estado = -1  # Jogada inválida
-
-        return estado, []
-
-    BoardGet, BoardUpdate, BoardReset, BoardStatus = bs.create_resources(board, predict)
-
-    api.add_resource(BoardGet, '/board/v1/fetch')
     api.add_resource(BoardUpdate, '/board/v1/update')
     api.add_resource(BoardReset, '/board/v1/reset')
-    api.add_resource(BoardStatus, '/board/v1/status')
 
     app.run(debug=debug)
 

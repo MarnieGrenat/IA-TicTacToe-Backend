@@ -1,62 +1,39 @@
 from flask_restful import Resource, reqparse
 from board.board import Board
 
-def create_resources(board: Board, callback):
+def create_resources(board: Board, predict):
     class Reset(Resource):
         def post(self):
             board.reset()
+
+            # Let MLP play first
+            board.update_board(1, predict(board.board))
             return {
                 'message': 'Board reset',
                 'board': board.export_board()
             }
 
-    class Status(Resource):
-        def get(self):
-            parser = reqparse.RequestParser()
-            parser.add_argument('features', type=str, location='args', required=True)
-            args = parser.parse_args()
-            try:
-                features = list(map(int, args['features'].split(',')))
-                pred, _ = callback(None, features)
-                return {
-                    'prediction': pred
-                }
-            except ValueError as e:
-                return {'error': str(e)}, 400
-
     class Update(Resource):
         def post(self):
             parser = reqparse.RequestParser()
-            parser.add_argument('s', type=int, location='json', required=True)
-            parser.add_argument('x', type=int, location='json', required=True)
-            parser.add_argument('y', type=int, location='json', required=True)
+            parser.add_argument('position', type=int, location='json', required=True)
             args = parser.parse_args()
 
-            s, x, y = args['s'], args['x'], args['y']
-            pos = x + y
-            if board.update_board(s, pos):
-                features = board.export_board('1x9')
-                pred, _ = callback(None, features)
+            player_position = args['position']
+            player_did_play = board.update_board(-1, player_position)
+            if player_did_play:
+                # let MLP play
+                if board.check_win() == 2: # If ongoing
+                    board.update_board(1, predict(board.board))
+
                 return {
                     'message': 'Board updated successfully',
                     'board': board.export_board('3x3'),
-                    'resultado': board.check_wins(),
-                    'estado_ia': pred
+                    'resultado': board.check_win()
                 }
             return {
-                'message': f'Failed to update board: {s=}, {x=}, {y=}'
+                'message': f'Failed to update board: {player_position=}'
             }, 500
 
-    class Get(Resource):
-        def get(self):
-            parser = reqparse.RequestParser()
-            parser.add_argument('raw', type=bool, location='args', required=False)
-            if parser.parse_args().get('raw'):
-                return {
-                    'board': board.export_board('1x3')
-                }
-            return {
-                'board': board.export_board('1x3')
-            }
 
-    return Get, Update, Reset, Status
+    return Update, Reset
