@@ -44,7 +44,7 @@ class Board:
                 result_1x9[pos] = 'O'
 
         for i in range(len(self.board)):
-            result_3x3[i%3][i//3] = result_1x9[i]
+            result_3x3[i // 3][i % 3] = result_1x9[i]
         if format == '1x9':
             return result_1x9
         elif format == '3x3':
@@ -78,10 +78,10 @@ class Board:
 
         for i in [0, 3, 6]:
             if b[i] == b[i + 1] == b[i + 2] != 0:
-                return self._getlabel(b[i])
+                return b[i]
         for i in [0, 1, 2]:
             if b[i] == b[i + 3] == b[i + 6] != 0:
-                return self._getlabel(b[i])
+                return b[i]
 
         # Verifica diagonais
         if (b[0] == b[4] == b[8] != 0) or (b[2] == b[4] == b[6] != 0):

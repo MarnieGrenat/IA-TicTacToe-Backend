@@ -34,6 +34,12 @@ def create_resources(board: Board, predict):
             return {
                 'message': f'Failed to update board: {player_position=}'
             }, 500
+    
+    class Fetch(Resource):
+        def get(self):
+            return {
+                'board': board.export_board('3x3')
+            }
 
 
-    return Update, Reset
+    return Update, Reset, Fetch

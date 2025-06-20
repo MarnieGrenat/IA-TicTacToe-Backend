@@ -17,10 +17,11 @@ def main(debug=False):
     model_path = os.path.join(current_dir, 'deps/output/model.json')
     mlp_model = load_model(model_path)
 
-    BoardUpdate, BoardReset = bs.create_resources(board, mlp_model.predict)
+    BoardUpdate, BoardReset, BoardFetch = bs.create_resources(board, mlp_model.predict)
 
     api.add_resource(BoardUpdate, '/board/v1/update')
     api.add_resource(BoardReset, '/board/v1/reset')
+    api.add_resource(BoardFetch, '/board/v1/fetch')
 
     app.run(debug=debug)
 
