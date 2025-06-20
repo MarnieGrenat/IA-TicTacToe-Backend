@@ -1,5 +1,5 @@
 import json
-from mlp.multilayer_perceptron import MultilayerPerceptron
+from deps.model.multilayer_perceptron import MultilayerPerceptron
 
 def load_model(json_path: str) -> MultilayerPerceptron:
     with open(json_path, 'r') as f:

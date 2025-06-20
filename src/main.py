@@ -14,7 +14,7 @@ def main(debug=False):
     board = Board()
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    model_path = os.path.join(current_dir, 'model.json')
+    model_path = os.path.join(current_dir, 'deps/output/model.json')
     mlp_model = load_model(model_path)
 
     # callback simplesmente chama mlp_model.predict(...)
