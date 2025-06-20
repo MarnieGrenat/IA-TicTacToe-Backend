@@ -18,12 +18,6 @@ class Board:
     --------
     update_board(symbol: int, x: int, y: int) -> bool
         Atualiza o tabuleiro com a jogada do jogador no ponto (x, y). Retorna True se a jogada for válida.
-
-    flatten_board() -> list
-        Retorna o tabuleiro como uma lista linear (1x9) para entrada da MLP.
-
-    check_wins() -> int
-        Verifica o estado atual do jogo: vitória (X ou O), empate ou jogo em andamento.
     """
 
     def __init__(self):

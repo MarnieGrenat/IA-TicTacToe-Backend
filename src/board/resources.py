@@ -33,12 +33,13 @@ def create_resources(board: Board, callback):
             args = parser.parse_args()
 
             s, x, y = args['s'], args['x'], args['y']
-            if board.update_board(s, x, y):
-                features = board.flatten_board()
+            pos = x + y
+            if board.update_board(s, pos):
+                features = board.export_board('1x9')
                 pred, _ = callback(None, features)
                 return {
                     'message': 'Board updated successfully',
-                    'board': board.export_board(),
+                    'board': board.export_board('3x3'),
                     'resultado': board.check_wins(),
                     'estado_ia': pred
                 }
@@ -52,10 +53,10 @@ def create_resources(board: Board, callback):
             parser.add_argument('raw', type=bool, location='args', required=False)
             if parser.parse_args().get('raw'):
                 return {
-                    'board': board.export_board_raw()
+                    'board': board.export_board('1x3')
                 }
             return {
-                'board': board.export_board()
+                'board': board.export_board('1x3')
             }
 
     return Get, Update, Reset, Status
