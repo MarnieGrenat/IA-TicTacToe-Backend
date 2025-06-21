@@ -1,3 +1,3 @@
 [submodule "src/deps"]
 	path = src/deps
-	url = git@github.com:MarnieGrenat/TicTacToe-Player.git
+	url = https://github.com/MarnieGrenat/TicTacToe-Player.git

@@ -4,6 +4,7 @@ from flask_cors import CORS
 from board.board import Board
 from board import resources as bs
 from model_loader import load_model
+from deps.model import Minimax
 import os
 
 def main(debug=False):
@@ -17,7 +18,8 @@ def main(debug=False):
     model_path = os.path.join(current_dir, 'deps/output/model.json')
     mlp_model = load_model(model_path)
 
-    BoardUpdate, BoardReset, BoardFetch = bs.create_resources(board, mlp_model.predict)
+    minimax = Minimax()
+    BoardUpdate, BoardReset, BoardFetch = bs.create_resources(board, mlp_model.predict, minimax.predict)
 
     api.add_resource(BoardUpdate, '/board/v1/update')
     api.add_resource(BoardReset, '/board/v1/reset')
