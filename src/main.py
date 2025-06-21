@@ -19,11 +19,21 @@ def main(debug=False):
     mlp_model = load_model(model_path)
 
     minimax = Minimax()
-    BoardUpdate, BoardReset, BoardFetch = bs.create_resources(board, mlp_model.predict, minimax.predict)
+
+    def update_minimax(mode: str):
+        try:
+            minimax.update(mode)
+            return True
+        except:
+            minimax.update('medium')
+            return False
+
+    BoardUpdate, BoardReset, BoardFetch, ChangeMinimax = bs.create_resources(board, mlp_model.predict, minimax.predict, update_minimax)
 
     api.add_resource(BoardUpdate, '/board/v1/update')
     api.add_resource(BoardReset, '/board/v1/reset')
     api.add_resource(BoardFetch, '/board/v1/fetch')
+    api.add_resource(ChangeMinimax, '/minimax/v1/update')
 
     app.run(debug=debug)
 

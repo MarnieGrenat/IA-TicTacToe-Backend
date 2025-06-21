@@ -3,7 +3,7 @@ from board.board import Board
 from deps.model import MultilayerPerceptron, Minimax
 
 
-def create_resources(board: Board, predict_mlp, predict_minimax):
+def create_resources(board: Board, predict_mlp, predict_minimax, update_minimax):
     class Reset(Resource):
         def post(self):
             parser = reqparse.RequestParser()
@@ -73,4 +73,22 @@ def create_resources(board: Board, predict_mlp, predict_minimax):
                 'board': board.export_board('3x3')
             }
 
-    return Update, Reset, Fetch
+    class ChangeMode(Resource):
+        def post(self):
+            parser = reqparse.RequestParser()
+            parser.add_argument('position', type=int, location='json', required=False)
+            parser.add_argument('modo', type=str, location='json', default='medium')
+            args = parser.parse_args()
+            mode = args['modo']
+            if update_minimax(mode):
+                return {
+                    'message': 'Minimax atualizado',
+                    'mode': mode
+                }, 200
+            else:
+                return {
+                    'message': 'Falha ao atualizar',
+                    'mode': mode
+                }, 201
+
+    return Update, Reset, Fetch, ChangeMode
