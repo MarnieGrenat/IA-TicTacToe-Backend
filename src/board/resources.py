@@ -17,7 +17,9 @@ def create_resources(board: Board, predict_mlp, predict_minimax, update_minimax)
             if modo in ['mlp', 'minimax']:
                 ia_symbol = 1  # X
                 prediction = predict_mlp(board.board) if modo == 'mlp' else predict_minimax(board.board)
-                board.update_board(ia_symbol, prediction)
+                # valida jogada da IA
+                if not board.update_board(ia_symbol, prediction):
+                    return {'message': 'Jogada inválida da IA', 'position': prediction}, 400
 
             return {
                 'message': 'Board reset',
@@ -32,63 +34,53 @@ def create_resources(board: Board, predict_mlp, predict_minimax, update_minimax)
             args = parser.parse_args()
 
             modo = args['modo']
-            pos = args['position']
+            pos = args.get('position')
 
+            # modo de treino: IA alternando até fim
             if modo == 'treino':
-                # Turno automático entre MLP e Minimax até terminar
                 current_player = 1 if board.board.count(0) % 2 == 1 else -1
                 predict_func = predict_mlp if current_player == 1 else predict_minimax
-
                 prediction = predict_func(board.board)
-                board.update_board(current_player, prediction)
-
+                if not board.update_board(current_player, prediction):
+                    return {'message': 'Jogada inválida no treino', 'position': prediction}, 400
                 return {
                     'message': 'Treinamento automático',
                     'board': board.export_board('3x3'),
                     'resultado': board.check_win(),
-                    'estado_ia': predict_mlp(board.board)  # previsão da IA mesmo no modo treino
+                    'estado_ia': prediction
                 }
 
-            # Jogador humano fez uma jogada (como O)
-            success = board.update_board(-1, pos)
-            if not success:
+            # jogada humana (O)
+            if pos is None or not board.update_board(-1, pos):
                 return {'message': 'Jogada inválida', 'position': pos}, 400
 
-            # Verifica se o jogo continua
+            # turno da IA
             if board.check_win() == 2:
-                # IA responde (MLP ou Minimax)
                 ia_prediction = predict_mlp(board.board) if modo == 'mlp' else predict_minimax(board.board)
-                board.update_board(1, ia_prediction)
+                if not board.update_board(1, ia_prediction):
+                    return {'message': 'Jogada inválida da IA', 'position': ia_prediction}, 400
 
             return {
                 'message': 'Board atualizado',
                 'board': board.export_board('3x3'),
                 'resultado': board.check_win(),
-                'estado_ia': predict_mlp(board.board)
+                'estado_ia': ia_prediction if modo != 'treino' else predict_mlp(board.board)
             }
 
     class Fetch(Resource):
         def get(self):
-            return {
-                'board': board.export_board('3x3')
-            }
+            return {'board': board.export_board('3x3')}
 
     class ChangeMode(Resource):
         def post(self):
             parser = reqparse.RequestParser()
-            parser.add_argument('position', type=int, location='json', required=False)
             parser.add_argument('modo', type=str, location='json', default='medium')
             args = parser.parse_args()
             mode = args['modo']
-            if update_minimax(mode):
-                return {
-                    'message': 'Minimax atualizado',
-                    'mode': mode
-                }, 200
-            else:
-                return {
-                    'message': 'Falha ao atualizar',
-                    'mode': mode
-                }, 201
+            ok = update_minimax(mode)
+            return {
+                'message': 'Minimax atualizado' if ok else 'Falha ao atualizar',
+                'mode': mode
+            }, (200 if ok else 400)
 
     return Update, Reset, Fetch, ChangeMode

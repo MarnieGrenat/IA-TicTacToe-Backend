@@ -33,7 +33,7 @@ def main(debug=False):
     api.add_resource(BoardUpdate, '/board/v1/update')
     api.add_resource(BoardReset, '/board/v1/reset')
     api.add_resource(BoardFetch, '/board/v1/fetch')
-    api.add_resource(ChangeMinimax, '/minimax/v1/update')
+    api.add_resource(ChangeMinimax, '/minimax/v1/change_mode')
 
     app.run(debug=debug)
 
